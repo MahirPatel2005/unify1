@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: unify-crm
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    disk:
+      name: crm-files
+      mountPath: /var/www/html/files
+      sizeGB: 1
+    envVars:
+      - key: CI_ENVIRONMENT
+        value: production
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        value: defaultdb
+      - key: DB_PREFIX
+        value: rise_crm_
+      - key: DB_SSL_CA
+        value: /var/www/html/deploy/ca.pem

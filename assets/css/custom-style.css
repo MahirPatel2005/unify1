@@ -1,0 +1,32 @@
+/* Unify branding - larger sidebar and header icons */
+.brand-logo img {
+  max-width: 320px;
+  max-height: 80px;
+  width: auto;
+  height: auto;
+}
+
+.brand-logo-mini img {
+  max-width: 64px;
+  max-height: 64px;
+  width: 64px;
+  height: 64px;
+}
+
+.navbar-custom .dashboard-image {
+  width: 64px !important;
+  height: 64px;
+  object-fit: contain;
+}
+
+.sidebar-brand {
+  padding: 14px 15px;
+  min-height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-scroll {
+  margin-top: 96px;
+}

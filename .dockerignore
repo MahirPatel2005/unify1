@@ -1,0 +1,8 @@
+.git
+.gitignore
+writable/logs/*
+writable/cache/*
+writable/session/*
+files/temp/*
+*.md
+.DS_Store
