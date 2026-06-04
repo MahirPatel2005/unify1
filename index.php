@@ -1,57 +1,5 @@
 <?php
 
-if (isset($_GET['debug_deploy'])) {
-    header('Content-Type: text/plain');
-    echo "CI_ENVIRONMENT: " . var_export(getenv('CI_ENVIRONMENT'), true) . "\n";
-    echo "DB_HOST: " . var_export(getenv('DB_HOST'), true) . "\n";
-    echo "DB_PORT: " . var_export(getenv('DB_PORT'), true) . "\n";
-    echo "DB_USER: " . var_export(getenv('DB_USER'), true) . "\n";
-    echo "DB_NAME: " . var_export(getenv('DB_NAME'), true) . "\n";
-    echo "DB_SSL_CA: " . var_export(getenv('DB_SSL_CA'), true) . " (exists: " . var_export(file_exists(getenv('DB_SSL_CA')), true) . ")\n";
-    
-    // Check PHP user and directory permissions
-    echo "PHP User: " . exec('whoami') . " (UID: " . (function_exists('posix_getuid') ? posix_getuid() : 'N/A') . ")\n";
-    $writablePath = '/var/www/html/writable';
-    if (file_exists($writablePath)) {
-        echo "writable dir exists\n";
-        echo "writable dir perms: " . substr(sprintf('%o', fileperms($writablePath)), -4) . "\n";
-        echo "writable dir owner UID: " . fileowner($writablePath) . " (name: " . (function_exists('posix_getpwuid') ? posix_getpwuid(fileowner($writablePath))['name'] : 'N/A') . ")\n";
-        echo "writable dir group GID: " . filegroup($writablePath) . " (name: " . (function_exists('posix_getgrgid') ? posix_getgrgid(filegroup($writablePath))['name'] : 'N/A') . ")\n";
-        echo "writable dir is_writable: " . var_export(is_writable($writablePath), true) . "\n";
-    } else {
-        echo "writable dir does NOT exist\n";
-    }
-    
-    $cachePath = $writablePath . '/cache';
-    if (file_exists($cachePath)) {
-        echo "cache dir exists\n";
-        echo "cache dir perms: " . substr(sprintf('%o', fileperms($cachePath)), -4) . "\n";
-        echo "cache dir owner UID: " . fileowner($cachePath) . "\n";
-        echo "cache dir is_writable: " . var_export(is_writable($cachePath), true) . "\n";
-    } else {
-        echo "cache dir does NOT exist\n";
-    }
-    
-    $mysqli = mysqli_init();
-    $ca = getenv('DB_SSL_CA');
-    if ($ca && file_exists($ca)) {
-        $mysqli->ssl_set(NULL, NULL, $ca, NULL, NULL);
-    }
-    $host = getenv('DB_HOST');
-    $user = getenv('DB_USER');
-    $pass = getenv('DB_PASSWORD');
-    $db = getenv('DB_NAME') ?: 'defaultdb';
-    $port = (int)(getenv('DB_PORT') ?: 3306);
-    
-    echo "Connecting to $host:$port...\n";
-    if (@$mysqli->real_connect($host, $user, $pass, $db, $port, NULL, $ca && file_exists($ca) ? MYSQLI_CLIENT_SSL : 0)) {
-        echo "Successfully connected to DB!\n";
-        $mysqli->close();
-    } else {
-        echo "Connection failed: " . mysqli_connect_error() . "\n";
-    }
-    exit;
-}
 
 /*
  *---------------------------------------------------------------
@@ -129,8 +77,12 @@ try {
     exit(CodeIgniter\Boot::bootWeb($paths));
 } catch (\Throwable $e) {
     header('Content-Type: text/plain', true, 500);
-    echo "Uncaught Exception: " . $e->getMessage() . "\n";
-    echo "File: " . $e->getFile() . " on line " . $e->getLine() . "\n";
-    echo "Stack Trace:\n" . $e->getTraceAsString() . "\n";
+    if (getenv('CI_ENVIRONMENT') !== 'production') {
+        echo "Uncaught Exception: " . $e->getMessage() . "\n";
+        echo "File: " . $e->getFile() . " on line " . $e->getLine() . "\n";
+        echo "Stack Trace:\n" . $e->getTraceAsString() . "\n";
+    } else {
+        echo "An unexpected error occurred. Please try again later.\n";
+    }
     exit(1);
 }
