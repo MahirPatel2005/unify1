@@ -1,5 +1,35 @@
 <?php
 
+if (isset($_GET['debug_deploy'])) {
+    header('Content-Type: text/plain');
+    echo "CI_ENVIRONMENT: " . var_export(getenv('CI_ENVIRONMENT'), true) . "\n";
+    echo "DB_HOST: " . var_export(getenv('DB_HOST'), true) . "\n";
+    echo "DB_PORT: " . var_export(getenv('DB_PORT'), true) . "\n";
+    echo "DB_USER: " . var_export(getenv('DB_USER'), true) . "\n";
+    echo "DB_NAME: " . var_export(getenv('DB_NAME'), true) . "\n";
+    echo "DB_SSL_CA: " . var_export(getenv('DB_SSL_CA'), true) . " (exists: " . var_export(file_exists(getenv('DB_SSL_CA')), true) . ")\n";
+    
+    $mysqli = mysqli_init();
+    $ca = getenv('DB_SSL_CA');
+    if ($ca && file_exists($ca)) {
+        $mysqli->ssl_set(NULL, NULL, $ca, NULL, NULL);
+    }
+    $host = getenv('DB_HOST');
+    $user = getenv('DB_USER');
+    $pass = getenv('DB_PASSWORD');
+    $db = getenv('DB_NAME') ?: 'defaultdb';
+    $port = (int)(getenv('DB_PORT') ?: 3306);
+    
+    echo "Connecting to $host:$port...\n";
+    if (@$mysqli->real_connect($host, $user, $pass, $db, $port, NULL, $ca && file_exists($ca) ? MYSQLI_CLIENT_SSL : 0)) {
+        echo "Successfully connected to DB!\n";
+        $mysqli->close();
+    } else {
+        echo "Connection failed: " . mysqli_connect_error() . "\n";
+    }
+    exit;
+}
+
 /*
  *---------------------------------------------------------------
  * CHECK PHP VERSION
