@@ -12,7 +12,7 @@ WORKDIR /var/www/html
 COPY . /var/www/html/
 
 RUN chown -R www-data:www-data /var/www/html/writable /var/www/html/files \
-    && chmod -R 775 /var/www/html/writable /var/www/html/files
+    && chmod -R 777 /var/www/html/writable /var/www/html/files
 
 COPY docker/start-apache.sh /usr/local/bin/start-apache.sh
 RUN chmod +x /usr/local/bin/start-apache.sh
