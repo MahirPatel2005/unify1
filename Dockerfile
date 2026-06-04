@@ -11,7 +11,13 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /var/www/html
 COPY . /var/www/html/
 
-RUN chown -R www-data:www-data /var/www/html/writable /var/www/html/files \
+RUN mkdir -p /var/www/html/writable/cache \
+             /var/www/html/writable/logs \
+             /var/www/html/writable/session \
+             /var/www/html/writable/debugbar \
+             /var/www/html/writable/uploads \
+             /var/www/html/files \
+    && chown -R www-data:www-data /var/www/html/writable /var/www/html/files \
     && chmod -R 777 /var/www/html/writable /var/www/html/files
 
 COPY docker/start-apache.sh /usr/local/bin/start-apache.sh
