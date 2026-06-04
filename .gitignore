@@ -5,4 +5,3 @@ writable/debugbar/*
 files/temp/*
 .DS_Store
 .env
-deploy/ca.pem
