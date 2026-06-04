@@ -9,6 +9,29 @@ if (isset($_GET['debug_deploy'])) {
     echo "DB_NAME: " . var_export(getenv('DB_NAME'), true) . "\n";
     echo "DB_SSL_CA: " . var_export(getenv('DB_SSL_CA'), true) . " (exists: " . var_export(file_exists(getenv('DB_SSL_CA')), true) . ")\n";
     
+    // Check PHP user and directory permissions
+    echo "PHP User: " . exec('whoami') . " (UID: " . (function_exists('posix_getuid') ? posix_getuid() : 'N/A') . ")\n";
+    $writablePath = '/var/www/html/writable';
+    if (file_exists($writablePath)) {
+        echo "writable dir exists\n";
+        echo "writable dir perms: " . substr(sprintf('%o', fileperms($writablePath)), -4) . "\n";
+        echo "writable dir owner UID: " . fileowner($writablePath) . " (name: " . (function_exists('posix_getpwuid') ? posix_getpwuid(fileowner($writablePath))['name'] : 'N/A') . ")\n";
+        echo "writable dir group GID: " . filegroup($writablePath) . " (name: " . (function_exists('posix_getgrgid') ? posix_getgrgid(filegroup($writablePath))['name'] : 'N/A') . ")\n";
+        echo "writable dir is_writable: " . var_export(is_writable($writablePath), true) . "\n";
+    } else {
+        echo "writable dir does NOT exist\n";
+    }
+    
+    $cachePath = $writablePath . '/cache';
+    if (file_exists($cachePath)) {
+        echo "cache dir exists\n";
+        echo "cache dir perms: " . substr(sprintf('%o', fileperms($cachePath)), -4) . "\n";
+        echo "cache dir owner UID: " . fileowner($cachePath) . "\n";
+        echo "cache dir is_writable: " . var_export(is_writable($cachePath), true) . "\n";
+    } else {
+        echo "cache dir does NOT exist\n";
+    }
+    
     $mysqli = mysqli_init();
     $ca = getenv('DB_SSL_CA');
     if ($ca && file_exists($ca)) {
