@@ -1,5 +1,64 @@
 <?php
 
+if (isset($_GET['debug_speed'])) {
+    header('Content-Type: text/plain');
+    $host = getenv('DB_HOST');
+    $user = getenv('DB_USER');
+    $pass = getenv('DB_PASSWORD');
+    $db   = getenv('DB_NAME') ?: 'defaultdb';
+    $port = (int)(getenv('DB_PORT') ?: 3306);
+    $ca   = getenv('DB_SSL_CA');
+    
+    echo "Starting Render Speed Diagnostics...\n\n";
+    
+    // 1. Measure DNS resolution time
+    $start = microtime(true);
+    $ip = gethostbyname($host);
+    $dns_time = microtime(true) - $start;
+    echo "1. DNS resolution for $host:\n";
+    echo "   Resolved IP: $ip\n";
+    echo "   Took: " . round($dns_time, 4) . " seconds\n\n";
+    
+    // 2. Measure TCP connection time
+    $start = microtime(true);
+    $fp = @fsockopen($ip, $port, $errno, $errstr, 5);
+    $tcp_time = microtime(true) - $start;
+    echo "2. TCP Socket Connection to $ip:$port:\n";
+    if ($fp) {
+        echo "   Took: " . round($tcp_time, 4) . " seconds\n\n";
+        fclose($fp);
+    } else {
+        echo "   Failed: $errstr ($errno) (took " . round($tcp_time, 4) . " seconds)\n\n";
+    }
+    
+    // 3. Measure mysqli connection with SSL
+    $start = microtime(true);
+    $mysqli = mysqli_init();
+    if ($ca && file_exists($ca)) {
+        $mysqli->ssl_set(NULL, NULL, $ca, NULL, NULL);
+    }
+    $conn_ok = @$mysqli->real_connect($ip, $user, $pass, $db, $port, NULL, $ca && file_exists($ca) ? MYSQLI_CLIENT_SSL : 0);
+    $conn_time = microtime(true) - $start;
+    echo "3. MySQL real_connect with SSL:\n";
+    if ($conn_ok) {
+        echo "   Took: " . round($conn_time, 4) . " seconds\n\n";
+        
+        // 4. Measure simple query time
+        $start = microtime(true);
+        $res = $mysqli->query("SELECT 1");
+        $query_time = microtime(true) - $start;
+        echo "4. Simple query (SELECT 1):\n";
+        echo "   Took: " . round($query_time, 4) . " seconds\n\n";
+        
+        $mysqli->close();
+    } else {
+        echo "   Failed: $mysqli->connect_error (took " . round($conn_time, 4) . " seconds)\n\n";
+    }
+    
+    echo "Diagnostics completed.\n";
+    exit;
+}
+
 
 /*
  *---------------------------------------------------------------
