@@ -97,9 +97,17 @@ if (getcwd() . DIRECTORY_SEPARATOR !== FCPATH) {
 require FCPATH . 'app/Config/Paths.php';
 // ^^^ Change this line if you move your application folder
 
-$paths = new Config\Paths();
+try {
+    $paths = new Config\Paths();
 
-// LOAD THE FRAMEWORK BOOTSTRAP FILE
-require $paths->systemDirectory . '/Boot.php';
+    // LOAD THE FRAMEWORK BOOTSTRAP FILE
+    require $paths->systemDirectory . '/Boot.php';
 
-exit(CodeIgniter\Boot::bootWeb($paths));
+    exit(CodeIgniter\Boot::bootWeb($paths));
+} catch (\Throwable $e) {
+    header('Content-Type: text/plain', true, 500);
+    echo "Uncaught Exception: " . $e->getMessage() . "\n";
+    echo "File: " . $e->getFile() . " on line " . $e->getLine() . "\n";
+    echo "Stack Trace:\n" . $e->getTraceAsString() . "\n";
+    exit(1);
+}
