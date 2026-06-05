@@ -200,6 +200,36 @@ if (!function_exists('upload_file_to_temp')) {
             $temp_file = get_array_value($file, "tmp_name");
             $file_name = get_array_value($file, "name");
             $file_size = get_array_value($file, "size");
+            $file_error = get_array_value($file, "error");
+
+            if ($file_error !== UPLOAD_ERR_OK || !$temp_file) {
+                $error_message = "File upload failed.";
+                switch ($file_error) {
+                    case UPLOAD_ERR_INI_SIZE:
+                        $error_message = "The uploaded file exceeds the upload_max_filesize directive in php.ini.";
+                        break;
+                    case UPLOAD_ERR_FORM_SIZE:
+                        $error_message = "The uploaded file exceeds the MAX_FILE_SIZE directive specified in the HTML form.";
+                        break;
+                    case UPLOAD_ERR_PARTIAL:
+                        $error_message = "The uploaded file was only partially uploaded.";
+                        break;
+                    case UPLOAD_ERR_NO_FILE:
+                        $error_message = "No file was uploaded.";
+                        break;
+                    case UPLOAD_ERR_NO_TMP_DIR:
+                        $error_message = "Missing a temporary folder.";
+                        break;
+                    case UPLOAD_ERR_CANT_WRITE:
+                        $error_message = "Failed to write file to disk.";
+                        break;
+                    case UPLOAD_ERR_EXTENSION:
+                        $error_message = "A PHP extension stopped the file upload.";
+                        break;
+                }
+                header("HTTP/1.1 400 Bad Request");
+                die($error_message);
+            }
 
             if (!is_valid_file_to_upload($file_name)) {
                 return false;
@@ -580,6 +610,10 @@ if (!function_exists('move_files_from_temp_dir_to_permanent_dir')) {
             if ($files && count($files) > 0) {
                 foreach ($files["tmp_name"] as $key => $file) {
                     $temp_file = $file;
+                    $file_error = isset($files["error"][$key]) ? $files["error"][$key] : UPLOAD_ERR_OK;
+                    if ($file_error !== UPLOAD_ERR_OK || !$temp_file) {
+                        continue;
+                    }
                     $file_name = $files["name"][$key];
                     $file_size = $files["size"][$key];
 
