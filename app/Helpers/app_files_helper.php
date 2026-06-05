@@ -501,27 +501,33 @@ if (!function_exists("get_google_drive_file_content")) {
 if (!function_exists('copy_text_based_image')) {
 
     function copy_text_based_image($source_path, $target_path) {
+        // Replace spaces with + in the base64 data (classic POST space-to-plus conversion issue)
+        if (strpos($source_path, ' ') !== false) {
+            $source_path = str_replace(' ', '+', $source_path);
+        }
 
         if (ini_get('allow_url_fopen')) {
-
             $buffer_size = 3145728;
             $byte_number = 0;
-            $file_open = fopen($source_path, "rb");
-            $file_wirte = fopen($target_path, "w");
-            while (!feof($file_open)) {
-                $byte_number += fwrite($file_wirte, fread($file_open, $buffer_size));
-            }
-            fclose($file_open);
-            fclose($file_wirte);
-            return $byte_number;
-        } else {
-
-            $file = explode(",", $source_path);
-            $base64 = get_array_value($file, 1);
-            if ($base64) {
-                return file_put_contents($target_path, base64_decode($base64));
+            $file_open = @fopen($source_path, "rb");
+            if ($file_open !== false) {
+                $file_wirte = fopen($target_path, "w");
+                while (!feof($file_open)) {
+                    $byte_number += fwrite($file_wirte, fread($file_open, $buffer_size));
+                }
+                fclose($file_open);
+                fclose($file_wirte);
+                return $byte_number;
             }
         }
+
+        // Fallback for when allow_url_fopen is disabled or if fopen fails
+        $file = explode(",", $source_path);
+        $base64 = get_array_value($file, 1);
+        if ($base64) {
+            return file_put_contents($target_path, base64_decode($base64));
+        }
+        return false;
     }
 }
 
