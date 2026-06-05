@@ -1,16 +1,30 @@
 /* Unify branding - larger sidebar and header icons */
 .brand-logo img {
-  max-width: 320px;
+  width: 100%;
+  max-width: 230px;
   max-height: 80px;
-  width: auto;
   height: auto;
+  object-fit: contain;
+}
+
+.brand-logo-mini {
+  display: none !important;
 }
 
 .brand-logo-mini img {
-  max-width: 64px;
-  max-height: 64px;
-  width: 64px;
-  height: 64px;
+  max-width: 50px;
+  max-height: 50px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.sidebar-toggled .brand-logo-mini {
+  display: flex !important;
+}
+
+.sidebar-toggled .brand-logo {
+  display: none !important;
 }
 
 .navbar-custom .dashboard-image {
@@ -20,7 +34,7 @@
 }
 
 .sidebar-brand {
-  padding: 14px 15px;
+  padding: 14px 10px;
   min-height: 88px;
   display: flex;
   align-items: center;
