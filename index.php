@@ -76,12 +76,9 @@ try {
     exit(CodeIgniter\Boot::bootWeb($paths));
 } catch (\Throwable $e) {
     header('Content-Type: text/plain', true, 500);
-    if (getenv('CI_ENVIRONMENT') !== 'production') {
-        echo "Uncaught Exception: " . $e->getMessage() . "\n";
-        echo "File: " . $e->getFile() . " on line " . $e->getLine() . "\n";
-        echo "Stack Trace:\n" . $e->getTraceAsString() . "\n";
-    } else {
-        echo "An unexpected error occurred. Please try again later.\n";
-    }
+    echo "Uncaught Exception: " . $e->getMessage() . "\n";
+    echo "File: " . $e->getFile() . " on line " . $e->getLine() . "\n";
+    echo "Stack Trace:\n" . $e->getTraceAsString() . "\n";
     exit(1);
 }
+
