@@ -101,6 +101,45 @@ class Exceptions extends BaseConfig
      */
     public function handler(int $statusCode, Throwable $exception): ExceptionHandlerInterface
     {
-        return new ExceptionHandler($this);
+        return new class implements ExceptionHandlerInterface {
+            public function handle(
+                Throwable $exception,
+                \CodeIgniter\HTTP\RequestInterface $request,
+                \CodeIgniter\HTTP\ResponseInterface $response,
+                int $statusCode,
+                int $exitCode
+            ): void {
+                $message = "Exception: " . $exception->getMessage() . " in " . clean_path($exception->getFile()) . " on line " . $exception->getLine();
+                
+                // Log the exception to PHP's system error log
+                error_log($message . "\n" . $exception->getTraceAsString());
+
+                // Detect AJAX request
+                $isAjax = $request->isAJAX() || 
+                          str_contains($request->getHeaderLine('accept'), 'application/json') || 
+                          str_contains($request->getHeaderLine('X-Requested-With'), 'XMLHttpRequest');
+
+                if ($isAjax) {
+                    if (!headers_sent()) {
+                        header('Content-Type: application/json; charset=UTF-8');
+                        header('HTTP/1.1 200 OK', true, 200); // 200 to allow front-end JS to parse and display the message
+                    }
+                    echo json_encode([
+                        "success" => false,
+                        "message" => $message
+                    ]);
+                    exit($exitCode);
+                }
+
+                // Standard HTML/text response
+                if (!headers_sent()) {
+                    header('Content-Type: text/plain; charset=UTF-8');
+                    header('HTTP/1.1 500 Internal Server Error', true, 500);
+                }
+                echo "Uncaught Exception:\n" . $message . "\n\nStack Trace:\n" . $exception->getTraceAsString();
+                exit($exitCode);
+            }
+        };
     }
 }
+
