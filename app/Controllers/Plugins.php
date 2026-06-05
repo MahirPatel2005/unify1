@@ -70,7 +70,40 @@ class Plugins extends Security_Controller {
         }
 
         $zip = new \ZipArchive;
-        $zip->open($plugin_zip_file);
+        if ($zip->open($plugin_zip_file) !== TRUE) {
+            echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+            exit();
+        }
+
+        // Check for nested ZIP files (e.g. upload.zip)
+        $has_inner_zip = false;
+        $inner_zip_name = "";
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $file_info_array = $zip->statIndex($i);
+            $name = get_array_value($file_info_array, "name");
+            if (basename($name) === "upload.zip" || (strtolower(pathinfo($name, PATHINFO_EXTENSION)) === 'zip' && strpos($name, '__MACOSX') === false)) {
+                $has_inner_zip = true;
+                $inner_zip_name = $name;
+                break;
+            }
+        }
+
+        if ($has_inner_zip) {
+            $inner_zip_temp_path = $temp_file_path . 'inner_' . uniqid() . '.zip';
+            $contents = $zip->getFromName($inner_zip_name);
+            if ($contents !== false) {
+                file_put_contents($inner_zip_temp_path, $contents);
+                $zip->close();
+                delete_file_from_directory($plugin_zip_file);
+
+                $plugin_zip_file = $inner_zip_temp_path;
+                $zip = new \ZipArchive;
+                if ($zip->open($plugin_zip_file) !== TRUE) {
+                    echo json_encode(array("success" => false, 'message' => app_lang('error_occurred')));
+                    exit();
+                }
+            }
+        }
 
         //the index.php is required
         $has_index_file = false;
