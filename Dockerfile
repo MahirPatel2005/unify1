@@ -19,8 +19,9 @@ RUN mkdir -p /var/www/html/writable/cache \
              /var/www/html/writable/debugbar \
              /var/www/html/writable/uploads \
              /var/www/html/files \
-    && chown -R www-data:www-data /var/www/html/writable /var/www/html/files \
-    && chmod -R 777 /var/www/html/writable /var/www/html/files
+             /var/www/html/plugins \
+    && chown -R www-data:www-data /var/www/html/writable /var/www/html/files /var/www/html/plugins \
+    && chmod -R 777 /var/www/html/writable /var/www/html/files /var/www/html/plugins
 
 COPY docker/start-apache.sh /usr/local/bin/start-apache.sh
 RUN chmod +x /usr/local/bin/start-apache.sh
