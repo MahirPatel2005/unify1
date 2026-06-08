@@ -20,7 +20,7 @@ if (!function_exists('mrp_has_permission')) {
 		$db = db_connect('default');
 		$dbprefix = get_db_prefix();
 		if (!$db->fieldExists("plugins_permissions1" ,$dbprefix . "roles")) { 
-			return false;
+			$db->query("ALTER TABLE `" . $dbprefix . "roles` ADD COLUMN `plugins_permissions1` TEXT NULL;");
 		}
 
 		$ci = new Security_Controller(false);

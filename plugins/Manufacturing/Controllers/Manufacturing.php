@@ -28,7 +28,7 @@ class Manufacturing extends Security_Controller {
 	public function work_center_manage()
 	{
 		if (!mrp_has_permission('manufacturing_can_view_global') ) {
-			app_redirect('work_center');
+			app_redirect('forbidden');
 		}
 
 		$data['title'] = app_lang('mrp_work_centers');
@@ -77,7 +77,7 @@ class Manufacturing extends Security_Controller {
 	public function add_edit_work_center($id = '')
 	{
 		if (!mrp_has_permission('manufacturing_can_view_global')  && !is_admin()) {
-			app_redirect('work_center');
+			app_redirect('forbidden');
 		}
 		
 		if ($this->request->getPost()) {
@@ -85,7 +85,7 @@ class Manufacturing extends Security_Controller {
 			
 			if ($id == '') {
 				if (!mrp_has_permission('manufacturing_can_create') && !is_admin()) {
-					app_redirect('work_center');
+					app_redirect('forbidden');
 				}
 
 				$id = $this->manufacturing_model->add_work_center($data);
@@ -101,7 +101,7 @@ class Manufacturing extends Security_Controller {
 
 			} else {
 				if (!mrp_has_permission('manufacturing_can_edit') && !is_admin()) {
-					app_redirect('work_center');
+					app_redirect('forbidden');
 				}
 
 				$response = $this->manufacturing_model->update_work_center($data, $id);
@@ -131,7 +131,7 @@ class Manufacturing extends Security_Controller {
 	public function view_work_center($id)
 	{
 		if (!mrp_has_permission('manufacturing_can_view_global')  && !is_admin()) {
-			app_redirect('work_center');
+			app_redirect('forbidden');
 		}
 
 		$work_center = $this->manufacturing_model->get_work_centers($id);
@@ -154,7 +154,7 @@ class Manufacturing extends Security_Controller {
 	{
 		$id = $this->request->getPost('id');
 		if (!mrp_has_permission('manufacturing_can_delete')  && !is_admin()) {
-			app_redirect('work_center');
+			app_redirect('forbidden');
 		}
 
 		$success = $this->manufacturing_model->delete_work_center($id);
@@ -278,7 +278,7 @@ class Manufacturing extends Security_Controller {
 	{
 		$id = $this->request->getPost('id');
 		if (!mrp_has_permission('manufacturing_can_delete')  && !is_admin()) {
-			app_redirect('work_center');
+			app_redirect('forbidden');
 		}
 
 		$success = $this->manufacturing_model->delete_working_hour($id);
@@ -300,7 +300,7 @@ class Manufacturing extends Security_Controller {
 	public function routing_manage()
 	{
 		if (!mrp_has_permission('manufacturing_can_view_global') ) {
-			app_redirect('work_center');
+			app_redirect('forbidden');
 		}
 
 		$data['title'] = app_lang('routing');
@@ -438,7 +438,7 @@ class Manufacturing extends Security_Controller {
 	public function operation_manage($id='')
 	{
 		if (!mrp_has_permission('manufacturing_can_view_global') ) {
-			app_redirect('work_center');
+			app_redirect('forbidden');
 		}
 
 		$data['title'] = app_lang('operation');
@@ -538,7 +538,7 @@ class Manufacturing extends Security_Controller {
 		$id = $this->request->getPost('id');
 		$routing_id = $this->request->getPost('id2');
 		if (!mrp_has_permission('manufacturing_can_delete')  && !is_admin()) {
-			app_redirect('work_center');
+			app_redirect('forbidden');
 		}
 
 		$success = $this->manufacturing_model->delete_operation($id);
@@ -822,7 +822,7 @@ class Manufacturing extends Security_Controller {
 	{
 		$id = $this->request->getPost('id');
 		if (!mrp_has_permission('manufacturing_can_delete')  && !is_admin()) {
-			app_redirect('work_center');
+			app_redirect('forbidden');
 		}
 
 		$success = $this->manufacturing_model->delete_unit_of_measure($id);
@@ -881,7 +881,7 @@ class Manufacturing extends Security_Controller {
 	public function add_edit_product($type, $id = '')
 	{
 		if (!mrp_has_permission('manufacturing_can_view_global')  && !is_admin()) {
-			app_redirect('work_center');
+			app_redirect('forbidden');
 		}
 		
 		if ($this->request->getPost()) {
@@ -901,7 +901,7 @@ class Manufacturing extends Security_Controller {
 
 			if ($id == '') {
 				if (!mrp_has_permission('manufacturing_can_create') && !is_admin()) {
-					app_redirect('work_center');
+					app_redirect('forbidden');
 				}
 
 				$result = $this->manufacturing_model->add_product($data, $type);
@@ -920,7 +920,7 @@ class Manufacturing extends Security_Controller {
 
 			} else {
 				if (!mrp_has_permission('manufacturing_can_edit') && !is_admin()) {
-					app_redirect('work_center');
+					app_redirect('forbidden');
 				}
 				$success = $this->manufacturing_model->update_product($data, $id, $type);
 				/*update file*/
@@ -1126,7 +1126,7 @@ class Manufacturing extends Security_Controller {
     public function bill_of_material_manage()
     {
     	if (!mrp_has_permission('manufacturing_can_view_global') ) {
-    		app_redirect('work_center');
+    		app_redirect('forbidden');
     	}
 
     	$data['title'] = app_lang('bill_of_material');
@@ -1461,7 +1461,7 @@ class Manufacturing extends Security_Controller {
 		$bill_of_material_id = $this->request->getPost('id2');
 
 		if (!mrp_has_permission('manufacturing_can_delete')  && !is_admin()) {
-			app_redirect('work_center');
+			app_redirect('forbidden');
 		}
 
 		$success = $this->manufacturing_model->delete_bill_of_material_detail($id);
