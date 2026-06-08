@@ -344,7 +344,7 @@ class Manufacturing extends Security_Controller {
 	{
 
 		if (!mrp_has_permission('manufacturing_can_view_global')  && !is_admin()) {
-			app_redirect('routing');
+			app_redirect('forbidden');
 		}
 		
 		if ($this->request->getPost()) {
@@ -352,7 +352,7 @@ class Manufacturing extends Security_Controller {
 
 			if ($id == '') {
 				if (!mrp_has_permission('manufacturing_can_create') && !is_admin()) {
-					app_redirect('routing');
+					app_redirect('forbidden');
 				}
 
 				$id = $this->manufacturing_model->add_routing($data);
@@ -363,7 +363,7 @@ class Manufacturing extends Security_Controller {
 
 			} else {
 				if (!mrp_has_permission('manufacturing_can_edit') && !is_admin()) {
-					app_redirect('routing');
+					app_redirect('forbidden');
 				}
 
 				$response = $this->manufacturing_model->update_routing($data, $id);
@@ -418,7 +418,7 @@ class Manufacturing extends Security_Controller {
 	{
 		$id = $this->request->getPost('id');
 		if (!mrp_has_permission('manufacturing_can_delete')  && !is_admin()) {
-			app_redirect('routing');
+			app_redirect('forbidden');
 		}
 
 		$success = $this->manufacturing_model->delete_routing($id);
@@ -488,7 +488,7 @@ class Manufacturing extends Security_Controller {
 	public function add_edit_operation($id='')
 	{
 		if (!mrp_has_permission('manufacturing_can_view_global')  && !is_admin()) {
-			app_redirect('operation');
+			app_redirect('forbidden');
 		}
 		
 		if ($this->request->getPost()) {
@@ -497,7 +497,7 @@ class Manufacturing extends Security_Controller {
 
 			if ($id == '') {
 				if (!mrp_has_permission('manufacturing_can_create') && !is_admin()) {
-					app_redirect('operation');
+					app_redirect('forbidden');
 				}
 
 				$id = $this->manufacturing_model->add_operation($data);
@@ -510,7 +510,7 @@ class Manufacturing extends Security_Controller {
 
 			} else {
 				if (!mrp_has_permission('manufacturing_can_edit') && !is_admin()) {
-					app_redirect('operation');
+					app_redirect('forbidden');
 				}
 
 				$response = $this->manufacturing_model->update_operation($data, $id);
@@ -590,7 +590,7 @@ class Manufacturing extends Security_Controller {
 	public function delete_operation_attachment_file($attachment_id)
 	{
 		if (!mrp_has_permission('manufacturing_can_delete') && !is_admin()) {
-			app_redirect('operation');
+			app_redirect('forbidden');
 		}
 
 		echo json_encode([
@@ -624,7 +624,7 @@ class Manufacturing extends Security_Controller {
 	{
 
 		if (!mrp_has_permission('manufacturing_can_view_global')  && !is_admin()) {
-			app_redirect('unit_of_measure_categories');
+			app_redirect('forbidden');
 		}
 		
 		if ($this->request->getPost()) {
@@ -635,7 +635,7 @@ class Manufacturing extends Security_Controller {
 
 			if ($id == '') {
 				if (!mrp_has_permission('manufacturing_can_create') && !is_admin()) {
-					app_redirect('unit_of_measure_categories');
+					app_redirect('forbidden');
 				}
 
 				$id = $this->manufacturing_model->add_unit_categories($data);
@@ -646,7 +646,7 @@ class Manufacturing extends Security_Controller {
 
 			} else {
 				if (!mrp_has_permission('manufacturing_can_edit') && !is_admin()) {
-					app_redirect('unit_of_measure_categories');
+					app_redirect('forbidden');
 				}
 
 				$response = $this->manufacturing_model->update_unit_categories($data, $id);
@@ -669,7 +669,7 @@ class Manufacturing extends Security_Controller {
 	{
 		$id = $this->request->getPost('id');
 		if (!mrp_has_permission('manufacturing_can_delete')  && !is_admin()) {
-			app_redirect('unit_of_measure_categories');
+			app_redirect('forbidden');
 		}
 
 		$success = $this->manufacturing_model->delete_unit_categories($id);
@@ -717,7 +717,7 @@ class Manufacturing extends Security_Controller {
 	public function add_edit_unit_of_measure($id = '')
 	{
 		if (!mrp_has_permission('manufacturing_can_view_global')  && !is_admin()) {
-			app_redirect('unit_of_measure');
+			app_redirect('forbidden');
 		}
 		
 		if ($this->request->getPost()) {
@@ -725,7 +725,7 @@ class Manufacturing extends Security_Controller {
 
 			if ($id == '') {
 				if (!mrp_has_permission('manufacturing_can_create') && !is_admin()) {
-					app_redirect('unit_of_measure');
+					app_redirect('forbidden');
 				}
 
 				$id = $this->manufacturing_model->add_unit_of_measure($data);
@@ -736,7 +736,7 @@ class Manufacturing extends Security_Controller {
 
 			} else {
 				if (!mrp_has_permission('manufacturing_can_edit') && !is_admin()) {
-					app_redirect('unit_of_measure');
+					app_redirect('forbidden');
 				}
 
 				$response = $this->manufacturing_model->update_unit_of_measure($data, $id);

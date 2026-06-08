@@ -3256,3 +3256,10 @@ if (!function_exists('remove_quotations')) {
         return preg_replace('/["\']/', '', $value);
     }
 }
+
+if (!function_exists('admin_url')) {
+    function admin_url($uri = "") {
+        return get_uri($uri);
+    }
+}
+

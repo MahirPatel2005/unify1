@@ -61,6 +61,7 @@ $custom_filters = unserialize($custom_filters);
 <script type="text/javascript">
     AppHelper = {};
     AppHelper.baseUrl = "<?php echo base_url(); ?>";
+    var admin_url = "<?php echo get_uri(); ?>";
     AppHelper.assetsDirectory = "<?php echo base_url("assets") . "/"; ?>";
     AppHelper.settings = {};
     AppHelper.settings.firstDayOfWeek = "<?php echo_escaped_value((int) get_setting("first_day_of_week") * 1); ?>" || 0;
