@@ -16,6 +16,10 @@ class Manufacturing extends Security_Controller {
 
 	}
 
+	public function index() {
+		app_redirect('manufacturing/dashboard');
+	}
+
 
 	/**
 	 * work center manage

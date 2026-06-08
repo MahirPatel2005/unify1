@@ -16,6 +16,10 @@ class Warehouse extends Security_Controller {
 
 	}
 
+	public function index() {
+		app_redirect('warehouse/commodity_list');
+	}
+
 	public function commodity_list($id = '') {
 
 		$data['units'] = $this->warehouse_model->get_unit_add_commodity();
