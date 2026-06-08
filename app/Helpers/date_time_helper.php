@@ -702,3 +702,9 @@ if (!function_exists('format_since_then')) {
         }
     }
 }
+
+if (!function_exists('_d')) {
+    function _d($date) {
+        return format_to_date($date, false);
+    }
+}
